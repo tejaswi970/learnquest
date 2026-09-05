@@ -16,8 +16,15 @@ export type SubjectType =
   | 'Science'
   | 'English'
   | 'Social Science'
-  | 'Computer Science'
-  | 'Environmental Studies';
+  | 'Environmental Studies'
+  | 'Activities'
+  | 'Computer Science';
+
+export type CurriculumStage =
+  | 'Basics & Foundational Skills'
+  | 'Core Concepts'
+  | 'Deeper Concepts & Problem Solving'
+  | 'Advanced Concepts & Board-Exam Prep';
 
 export type DifficultyLevel = 'Explorer' | 'Challenger' | 'Master';
 
@@ -47,6 +54,9 @@ export interface Topic {
   difficulty: DifficultyLevel;
   estimatedMinutes: number;
   keyConcepts: string[];
+  stage?: CurriculumStage;
+  subtopics?: string[];
+  boardSuitability?: string;
 }
 
 export interface Chapter {
@@ -55,6 +65,8 @@ export interface Chapter {
   subject: SubjectType;
   grade: GradeLevel;
   topics: Topic[];
+  stage?: CurriculumStage;
+  category?: string;
 }
 
 export type QuestionType = 'mcq' | 'true_false' | 'matching';

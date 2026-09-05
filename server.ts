@@ -50,9 +50,10 @@ app.post("/api/generate-ai-challenge", async (req: Request, res: Response) => {
       });
     }
 
-    const prompt = `You are an expert curriculum developer and teacher for ${grade} students in subject "${subject}".
-Generate an engaging, age-appropriate educational challenge about "${topic}" at "${difficulty}" difficulty.
+    const prompt = `You are an expert curriculum developer and pedagogical educator for Indian school education (CBSE, ICSE, and State Boards like AP & Telangana) for ${grade} students in subject "${subject}".
+Generate an engaging, age-appropriate educational challenge for the syllabus topic "${topic}" at "${difficulty}" difficulty level.
 Activity type requested: "${activityType}".
+Keep questions aligned with Indian curriculum standards (e.g. Rupee currency symbols, SI metric units, Indian context and standard pedagogical terminology).
 Generate exactly ${Math.min(Number(count) || 4, 8)} questions or interactive items.
 
 Return ONLY a valid JSON object matching this schema without markdown fences:

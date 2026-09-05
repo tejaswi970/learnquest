@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Gamepad2,
   Sparkles,
@@ -49,6 +49,21 @@ export const GameGenerator: React.FC<GameGeneratorProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [generationInfo, setGenerationInfo] = useState<string | null>(null);
+
+  // Subjects available for selected grade
+  const subjectsForGrade = useMemo(() => {
+    const topicsForGrade = ALL_TOPICS.filter((t) => t.grade === selectedGrade);
+    const set = new Set<SubjectType>();
+    topicsForGrade.forEach((t) => set.add(t.subject));
+    return ALL_SUBJECTS.filter((s) => set.has(s));
+  }, [selectedGrade]);
+
+  // If selected subject is not in current grade, switch to first available
+  useEffect(() => {
+    if (subjectsForGrade.length > 0 && !subjectsForGrade.includes(selectedSubject)) {
+      setSelectedSubject(subjectsForGrade[0]);
+    }
+  }, [selectedGrade, subjectsForGrade, selectedSubject]);
 
   // Available topics for selected grade & subject
   const availableTopics = getTopicsByGradeAndSubject(selectedGrade, selectedSubject);
@@ -225,7 +240,7 @@ export const GameGenerator: React.FC<GameGeneratorProps> = ({
               onChange={(e) => setSelectedSubject(e.target.value as SubjectType)}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none"
             >
-              {ALL_SUBJECTS.map((s) => (
+              {(subjectsForGrade.length > 0 ? subjectsForGrade : ALL_SUBJECTS).map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>

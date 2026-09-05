@@ -26,8 +26,8 @@ export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
               <HelpCircle className="w-6 h-6 text-indigo-200" />
             </div>
             <div>
-              <h2 className="text-lg font-bold">LearnQuest AI — Help & System Guide</h2>
-              <p className="text-xs text-indigo-200">Team 5 • SRS Version 1.0 (MVP)</p>
+              <h2 className="text-lg font-bold">LearnQuest — Help & System Guide</h2>
+              <p className="text-xs text-indigo-200">System Documentation Version 1.0</p>
             </div>
           </div>
           <button
@@ -47,7 +47,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
               <span>Project Overview</span>
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              LearnQuest AI converts Kindergarten through Grade 10 syllabus topics into engaging gamified challenges, speed quizzes, and memory matching puzzles. It is engineered to keep students motivated through instant scoring, step-by-step explanations, and real-time streak tracking.
+              LearnQuest converts Kindergarten through Grade 10 syllabus topics into engaging challenges, speed quizzes, and memory matching puzzles. It is engineered to keep students motivated through instant scoring, step-by-step explanations, and real-time streak tracking.
             </p>
           </div>
 
@@ -97,6 +97,31 @@ export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
             </div>
           </div>
 
+          {/* Indian Curriculum & Progression Stages */}
+          <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2 text-xs">
+            <div className="flex items-center gap-2 font-bold text-amber-900">
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              <span>Curriculum Progression: KG to 10th Class (CBSE, ICSE & State Boards)</span>
+            </div>
+            <p className="text-slate-700 leading-relaxed">
+              Standardized across Central and State syllabi (CBSE, ICSE, AP & Telangana State Boards) across 4 foundational progressions:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px]">
+              <div className="bg-white/80 p-2 rounded-lg border border-amber-200">
+                <span className="font-bold text-slate-800">KG → 2:</span> Foundational skills, phonics, numbers, shapes, EVS, and activities.
+              </div>
+              <div className="bg-white/80 p-2 rounded-lg border border-amber-200">
+                <span className="font-bold text-slate-800">3 → 5:</span> Core concepts, 4 operations, fractions, human body, ecosystems, and maps.
+              </div>
+              <div className="bg-white/80 p-2 rounded-lg border border-amber-200">
+                <span className="font-bold text-slate-800">6 → 8:</span> Deeper concepts, algebra, physics, chemistry, biology, history, and civics.
+              </div>
+              <div className="bg-white/80 p-2 rounded-lg border border-amber-200">
+                <span className="font-bold text-slate-800">9 → 10:</span> Advanced concepts & Board-Exam prep (trigonometry, mechanics, genetics, economics).
+              </div>
+            </div>
+          </div>
+
           {/* Architecture & AI Fallback Notice (SRS Section 4) */}
           <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-2 text-xs">
             <div className="flex items-center gap-2 font-bold text-indigo-900">
@@ -104,14 +129,14 @@ export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
               <span>AI Layer & 100% Reliable Fallback Architecture</span>
             </div>
             <p className="text-slate-600 leading-relaxed">
-              In accordance with SRS Section 4.3 & 4.5, LearnQuest AI is completely decoupled from mandatory external paid APIs. When a Gemini API key is configured server-side, it crafts dynamic tailored questions. If offline or if no key is present, the verified rule-based question bank seamlessly generates questions so learning never halts.
+              In accordance with system specifications, LearnQuest is completely decoupled from mandatory external paid APIs. When a Gemini API key is configured server-side, it crafts dynamic tailored questions. If offline or if no key is present, the verified rule-based question bank seamlessly generates questions so learning never halts.
             </p>
           </div>
 
           {/* Document Control Summary */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-1.5 text-slate-500">
-            <p><strong>Document:</strong> Software Requirements Specification (SRS) 1.0</p>
-            <p><strong>Prepared for:</strong> Team 5 – LearnQuest AI</p>
+            <p><strong>Platform:</strong> LearnQuest</p>
+            <p><strong>Curriculum:</strong> KG–10 (CBSE, ICSE & State Boards)</p>
             <p><strong>Target Environment:</strong> Modern Web Browsers, GitHub, Vercel, Cloud Run</p>
           </div>
         </div>

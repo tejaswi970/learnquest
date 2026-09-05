@@ -1,6 +1,6 @@
 {
-  "name": "LearnQuest AI",
-  "description": "AI-assisted gamified learning platform converting KG–10 syllabus topics into personalized interactive games, quizzes, and learning challenges with real-time feedback.",
+  "name": "LearnQuest",
+  "description": "Interactive learning platform converting KG–10 syllabus topics into personalized games, quizzes, and learning challenges with real-time feedback.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

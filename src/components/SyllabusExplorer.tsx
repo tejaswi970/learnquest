@@ -1,18 +1,25 @@
 import React, { useState, useMemo } from 'react';
 import {
   Search,
-  Filter,
   BookOpen,
   Clock,
-  Zap,
   Play,
   Gamepad2,
   X,
   Layers,
-  ChevronRight,
   GraduationCap,
+  Sparkles,
+  Award,
+  CheckCircle,
+  Compass,
 } from 'lucide-react';
-import { ALL_GRADES, ALL_SUBJECTS, SYLLABUS_CHAPTERS } from '../syllabusData';
+import {
+  ALL_GRADES,
+  ALL_SUBJECTS,
+  SYLLABUS_CHAPTERS,
+  CURRICULUM_STAGES,
+  getCurriculumStageForGrade,
+} from '../syllabusData';
 import { GradeLevel, SubjectType, Topic } from '../types';
 import { playSound } from '../soundEffects';
 
@@ -30,6 +37,19 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
   const [selectedSubject, setSelectedSubject] = useState<SubjectType | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Active progression stage
+  const currentStage = useMemo(() => {
+    return getCurriculumStageForGrade(selectedGrade);
+  }, [selectedGrade]);
+
+  // Subjects actually present in current grade
+  const subjectsInCurrentGrade = useMemo(() => {
+    const chaptersForGrade = SYLLABUS_CHAPTERS.filter((c) => c.grade === selectedGrade);
+    const set = new Set<SubjectType>();
+    chaptersForGrade.forEach((c) => set.add(c.subject));
+    return ALL_SUBJECTS.filter((s) => set.has(s));
+  }, [selectedGrade]);
+
   // Filter chapters and topics
   const filteredChapters = useMemo(() => {
     return SYLLABUS_CHAPTERS.filter((chap) => chap.grade === selectedGrade)
@@ -46,7 +66,8 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
             const inDesc = top.description.toLowerCase().includes(query);
             const inSubject = top.subject.toLowerCase().includes(query);
             const inConcepts = top.keyConcepts.some((c) => c.toLowerCase().includes(query));
-            return inTitle || inDesc || inSubject || inConcepts;
+            const inSubtopics = top.subtopics?.some((st) => st.toLowerCase().includes(query));
+            return inTitle || inDesc || inSubject || inConcepts || Boolean(inSubtopics);
           }
           return true;
         });
@@ -76,13 +97,13 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold mb-2">
             <GraduationCap className="w-3.5 h-3.5" />
-            <span>KG–10 Structured Curriculum</span>
+            <span>KG–10 Indian School Curriculum (CBSE, ICSE & State Boards)</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
             Syllabus & Subject Explorer
           </h1>
-          <p className="text-sm text-slate-600 mt-1">
-            Browse official learning units, chapters, and topics. Select any topic to generate instant games or quizzes.
+          <p className="text-sm text-slate-600 mt-1 max-w-3xl">
+            Browse structured chapters, key concepts, and official topics from Kindergarten through 10th Class. Select any unit to launch interactive quizzes, speed sprints, or memory challenges.
           </p>
         </div>
 
@@ -108,13 +129,69 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
         </div>
       </div>
 
+      {/* Curriculum Stage Progression Selector */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            <Compass className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Curriculum Progression Stages:</span>
+          </span>
+          <span className="text-xs text-slate-500 hidden sm:inline">
+            NEP 5+3+3+4 / CBSE, ICSE, AP & Telangana State Boards
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {CURRICULUM_STAGES.map((stage) => {
+            const isCurrent = stage.id === currentStage.id;
+            return (
+              <button
+                key={stage.id}
+                onClick={() => {
+                  playSound('click');
+                  if (!stage.grades.includes(selectedGrade)) {
+                    onSelectGrade(stage.grades[0]);
+                  }
+                }}
+                className={`p-3.5 rounded-2xl text-left transition border ${
+                  isCurrent
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-500/20'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
+                      isCurrent ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {stage.grades.join(', ')}
+                  </span>
+                  {isCurrent && <CheckCircle className="w-3.5 h-3.5 text-indigo-200 shrink-0" />}
+                </div>
+                <div className="mt-2 font-bold text-sm leading-tight">{stage.badge}</div>
+                <div
+                  className={`text-[11px] mt-1 line-clamp-2 ${
+                    isCurrent ? 'text-indigo-100' : 'text-slate-500'
+                  }`}
+                >
+                  {stage.focusArea}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Grade Selector Tabs (KG to Grade 10) */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             Select Class / Grade Level:
           </span>
-          <span className="text-xs text-indigo-600 font-semibold">Active: {selectedGrade}</span>
+          <span className="text-xs text-indigo-600 font-semibold">
+            Active: {selectedGrade} ({currentStage.badge})
+          </span>
         </div>
         <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
           {ALL_GRADES.map((grade) => (
@@ -137,6 +214,27 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
         </div>
       </div>
 
+      {/* Active Stage Detail Banner */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-50 via-slate-50 to-indigo-50/40 border border-indigo-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-indigo-900">{currentStage.label}</span>
+            <span className="text-[11px] px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 font-medium">
+              {currentStage.badge}
+            </span>
+          </div>
+          <p className="text-xs text-slate-600">{currentStage.description}</p>
+          <div className="text-[11px] text-slate-500 flex items-center gap-1.5 pt-0.5">
+            <span className="font-semibold text-slate-700">Curriculum focus:</span> {currentStage.focusArea}
+          </div>
+        </div>
+        <div className="shrink-0 text-right md:border-l md:border-indigo-100 md:pl-4">
+          <div className="text-[10px] uppercase font-bold text-slate-400">Board Alignment</div>
+          <div className="text-xs font-semibold text-indigo-700 mt-0.5">CBSE • ICSE • State Boards</div>
+          <div className="text-[11px] text-slate-500">AP / Telangana & State Syllabi</div>
+        </div>
+      </div>
+
       {/* Subject Filter Pills */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -144,7 +242,7 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
             Filter by Subject:
           </span>
           <span className="text-xs text-slate-400">
-            {totalTopicsCount} topic{totalTopicsCount === 1 ? '' : 's'} found
+            {totalTopicsCount} topic{totalTopicsCount === 1 ? '' : 's'} available
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -161,7 +259,7 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
           >
             All Subjects
           </button>
-          {ALL_SUBJECTS.map((sub) => (
+          {subjectsInCurrentGrade.map((sub) => (
             <button
               key={sub}
               onClick={() => {
@@ -188,12 +286,11 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
           </div>
           <h3 className="text-lg font-bold text-slate-800">No syllabus topics match your filter</h3>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
-            We couldn&apos;t find any topics for <strong>{selectedGrade}</strong> in{' '}
-            <strong>{selectedSubject}</strong> with search &quot;{searchQuery}&quot;. Try resetting your filters to explore all available topics.
+            Try adjusting your search query or switch subjects to explore all units for {selectedGrade}.
           </p>
           <button
             onClick={handleResetFilters}
-            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition"
+            className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition"
           >
             Reset Filters
           </button>
@@ -203,18 +300,33 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
           {filteredChapters.map((chapter) => (
             <div key={chapter.id} className="space-y-4">
               {/* Chapter Header */}
-              <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
-                <BookOpen className="w-4 h-4 text-indigo-600 shrink-0" />
-                <h2 className="font-bold text-slate-900 text-base sm:text-lg">
-                  {chapter.title}
-                </h2>
-                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 ml-auto">
-                  {chapter.subject}
-                </span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-200 gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900">{chapter.title}</h2>
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <span>{chapter.subject}</span>
+                      <span>•</span>
+                      <span>{chapter.grade}</span>
+                      {chapter.category && (
+                        <>
+                          <span>•</span>
+                          <span className="font-semibold text-indigo-600">{chapter.category}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-slate-400">
+                  {chapter.topics.length} topic{chapter.topics.length === 1 ? '' : 's'}
+                </div>
               </div>
 
               {/* Topics Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {chapter.topics.map((topic) => (
                   <div
                     key={topic.id}
@@ -242,6 +354,23 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
                         {topic.description}
                       </p>
 
+                      {/* Subtopics / syllabus syllabus breakdown */}
+                      {topic.subtopics && topic.subtopics.length > 0 && (
+                        <div className="pt-1">
+                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                            Key Subtopics:
+                          </div>
+                          <ul className="space-y-0.5">
+                            {topic.subtopics.slice(0, 3).map((st, i) => (
+                              <li key={i} className="text-[11px] text-slate-600 flex items-start gap-1.5">
+                                <span className="text-indigo-500 font-bold">•</span>
+                                <span className="line-clamp-1">{st}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
                       {/* Key Concepts Tags */}
                       <div className="flex flex-wrap items-center gap-1.5 pt-1">
                         {topic.keyConcepts.map((concept, idx) => (
@@ -253,23 +382,41 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
                           </span>
                         ))}
                       </div>
+
+                      {topic.boardSuitability && (
+                        <div className="text-[10px] text-slate-400 font-medium pt-1">
+                          📋 {topic.boardSuitability}
+                        </div>
+                      )}
                     </div>
 
                     {/* Bottom Actions Strip */}
                     <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 text-xs text-slate-400">
                         <Clock className="w-3.5 h-3.5" />
-                        <span>~{topic.estimatedMinutes} mins</span>
+                        <span>~{topic.estimatedMinutes}m</span>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => {
+                            playSound('start');
+                            onLaunchTopic(topic, 'matching');
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold flex items-center gap-1 transition"
+                          title="Memory Match Cards"
+                        >
+                          <Layers className="w-3.5 h-3.5 text-indigo-600" />
+                          <span className="hidden sm:inline">Cards</span>
+                        </button>
+
                         <button
                           onClick={() => {
                             playSound('start');
                             onLaunchTopic(topic, 'speed');
                           }}
-                          className="px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold flex items-center gap-1.5 transition border border-amber-200/70"
-                          title="Play Speed Challenge"
+                          className="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold flex items-center gap-1 transition border border-amber-200/70"
+                          title="Play Speed Sprint Challenge"
                         >
                           <Gamepad2 className="w-3.5 h-3.5 text-amber-600" />
                           <span>Game</span>
@@ -280,11 +427,11 @@ export const SyllabusExplorer: React.FC<SyllabusExplorerProps> = ({
                             playSound('start');
                             onLaunchTopic(topic, 'quiz');
                           }}
-                          className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+                          className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1 transition shadow-xs"
                           title="Take Interactive Quiz"
                         >
                           <Play className="w-3.5 h-3.5 fill-white" />
-                          <span>Start Quiz</span>
+                          <span>Quiz</span>
                         </button>
                       </div>
                     </div>

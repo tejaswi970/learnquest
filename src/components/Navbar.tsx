@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { StudentProfile } from '../types';
 import { playSound } from '../soundEffects';
+import { InteractiveLogo } from './InteractiveLogo';
 
 interface NavbarProps {
   currentTab: string;
@@ -54,21 +55,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo & Brand */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleNavClick('home')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-lg text-slate-900 tracking-tight">LearnQuest <span className="text-indigo-600">AI</span></span>
-                <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60">
-                  Team 5
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 hidden sm:block">Gamified Learning for KG–10</p>
-            </div>
-          </div>
+          {/* Interactive Logo & Brand */}
+          <InteractiveLogo onNavigateHome={() => handleNavClick('home')} />
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-1">

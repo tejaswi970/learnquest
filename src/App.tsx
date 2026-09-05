@@ -238,9 +238,9 @@ export default function App() {
       <footer className="bg-white border-t border-slate-200/80 py-8 mt-12 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-center sm:text-left">
-            <span className="font-bold text-slate-800">LearnQuest AI</span>
+            <span className="font-bold text-slate-800">LearnQuest</span>
             <span>•</span>
-            <span>Team 5 — Gamified Learning for KG–10</span>
+            <span>Interactive Curriculum Platform for KG–10</span>
           </div>
 
           <div className="flex items-center gap-4">

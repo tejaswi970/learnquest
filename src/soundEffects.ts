@@ -26,7 +26,7 @@ export function getIsSoundEnabled(): boolean {
   return isSoundEnabled;
 }
 
-export function playSound(type: 'correct' | 'incorrect' | 'click' | 'victory' | 'start'): void {
+export function playSound(type: 'correct' | 'incorrect' | 'click' | 'victory' | 'start' | 'mascot'): void {
   if (!isSoundEnabled) return;
   try {
     const ctx = getAudioContext();
@@ -34,7 +34,22 @@ export function playSound(type: 'correct' | 'incorrect' | 'click' | 'victory' | 
 
     const now = ctx.currentTime;
 
-    if (type === 'click') {
+    if (type === 'mascot') {
+      // Playful friendly cute chirp with bubbly harmonic glissando
+      const notes = [587.33, 783.99, 1046.5, 1318.51]; // D5, G5, C6, E6
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+        gain.gain.setValueAtTime(0.12, now + idx * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.16);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + idx * 0.05);
+        osc.stop(now + idx * 0.05 + 0.18);
+      });
+    } else if (type === 'click') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';

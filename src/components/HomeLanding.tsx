@@ -12,10 +12,12 @@ import {
   BrainCircuit,
   GraduationCap,
   Star,
+  Compass,
 } from 'lucide-react';
-import { ALL_GRADES } from '../syllabusData';
+import { ALL_GRADES, CURRICULUM_STAGES } from '../syllabusData';
 import { GradeLevel, StudentProfile } from '../types';
 import { playSound } from '../soundEffects';
+import { InteractiveLogo } from './InteractiveLogo';
 
 interface HomeLandingProps {
   onStartLearning: () => void;
@@ -36,13 +38,16 @@ export const HomeLanding: React.FC<HomeLandingProps> = ({
       <section className="relative overflow-hidden pt-8 sm:pt-14 pb-12 bg-gradient-to-b from-indigo-50/70 via-white to-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-100/80 border border-indigo-200 text-indigo-800 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Team 5 • Version 1.0 • Demo-Ready Web App</span>
+            <div className="flex flex-col items-center justify-center gap-3">
+              <InteractiveLogo size="lg" onNavigateHome={onStartLearning} />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-100/80 border border-indigo-200 text-indigo-800 text-xs font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                <span>Interactive Curriculum • CBSE, ICSE & State Boards</span>
+              </div>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
-              Gamified Learning for{' '}
+              Interactive Learning for{' '}
               <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-amber-500 bg-clip-text text-transparent">
                 KG through Grade 10
               </span>
@@ -121,6 +126,56 @@ export const HomeLanding: React.FC<HomeLandingProps> = ({
         </div>
       </section>
 
+      {/* Indian School Curriculum Stages Framework (KG to Class 10) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-8 space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-200">
+            <Compass className="w-3.5 h-3.5" />
+            <span>Structured Progression</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            Indian School Curriculum (KG to 10th Class)
+          </h2>
+          <p className="text-sm text-slate-600">
+            Calibrated for CBSE, ICSE, and State Boards (AP / Telangana) across four progressive learning stages.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {CURRICULUM_STAGES.map((stage) => (
+            <div
+              key={stage.id}
+              onClick={() => {
+                playSound('click');
+                onExploreSyllabus(stage.grades[0]);
+              }}
+              className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs hover:border-indigo-300 hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-3 group"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase tracking-wider">
+                    {stage.grades.join(', ')}
+                  </span>
+                  <span className="text-xs text-indigo-600 font-semibold group-hover:translate-x-0.5 transition flex items-center gap-0.5">
+                    Explore &rarr;
+                  </span>
+                </div>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition">
+                  {stage.badge}
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {stage.description}
+                </p>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+                <span className="font-semibold text-slate-700">Key focus:</span> {stage.focusArea}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Problem & Solution Callout (SRS Section 1.2) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
@@ -148,7 +203,7 @@ export const HomeLanding: React.FC<HomeLandingProps> = ({
               </div>
               <h3 className="text-xl font-bold text-slate-900">Curriculum Turned Into Adaptive Quests</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                LearnQuest AI turns official KG–10 topics into bite-sized gamified challenges. Students earn XP, maintain streaks,
+                LearnQuest turns official KG–10 topics into bite-sized interactive challenges. Students earn XP, maintain streaks,
                 receive step-by-step teaching explanations, and get smart recommendations tailored to their strengths and growth areas.
               </p>
             </div>
@@ -160,12 +215,12 @@ export const HomeLanding: React.FC<HomeLandingProps> = ({
         </div>
       </section>
 
-      {/* Core Features Grid (SRS Section 3) */}
+      {/* Core Features Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Platform Core Capabilities</h2>
           <p className="text-slate-600 text-sm sm:text-base">
-            Engineered strictly to the Software Requirements Specification (Team 5)
+            Structured Learning Architecture for KG–10 Students
           </p>
         </div>
 
